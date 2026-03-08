@@ -12,9 +12,17 @@
     "dev": "tsc -w -p tsconfig.json",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src --ext .ts",
-    "test": "node -e \"console.log('test @claricore/observability')\"",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "clean": "rm -rf dist"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.58.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.58.0",
+    "@opentelemetry/sdk-node": "^0.58.0"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.2"
+  }
 }

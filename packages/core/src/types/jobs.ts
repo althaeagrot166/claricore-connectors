@@ -1,6 +1,7 @@
 import type { Checkpoint } from "./checkpoint";
 
 export interface ExtractContext {
+  orgId: string;
   connectionId: string;
   runId: string;
   mode: "full" | "incremental";
@@ -10,6 +11,7 @@ export interface ExtractContext {
 }
 
 export interface LoadContext {
+  orgId: string;
   connectionId: string;
   runId: string;
   resource?: string;
@@ -23,6 +25,7 @@ export interface LoadResult {
 
 export interface SyncJob {
   id: string;
+  orgId: string;
   connectionId: string;
   connectorType: string;
   mode: "full" | "incremental";
@@ -34,6 +37,7 @@ export interface SyncJob {
 }
 
 export interface CreateSyncJobInput {
+  orgId: string;
   connectionId: string;
   connectorType: string;
   mode: "full" | "incremental";

@@ -12,11 +12,14 @@
     "dev": "tsc -w -p tsconfig.json",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src --ext .ts",
-    "test": "node -e \"console.log('test @claricore/connector-salesforce')\"",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "clean": "rm -rf dist"
   },
   "dependencies": {
     "@claricore/core": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.2"
   }
 }

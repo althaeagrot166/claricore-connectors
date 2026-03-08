@@ -20,6 +20,7 @@
     "@claricore/registry": "workspace:*",
     "@claricore/secret-manager": "workspace:*",
     "@claricore/ui-contracts": "workspace:*",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "@claricore/observability": "workspace:*"
   }
 }

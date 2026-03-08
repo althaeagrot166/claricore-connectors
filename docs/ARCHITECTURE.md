@@ -1,28 +1,22 @@
-# Architecture
+# Claricore V6 Architecture
 
-Claricore is a TypeScript monorepo with API, worker, scheduler, and webhook gateway services.
+## Tenant model
+All first-class records are org-scoped (`org_id`): connections, sync jobs, schedules, connection secrets, checkpoints, webhook events.
 
-## Runtime components
-- **API**: connection and sync orchestration.
-- **Worker**: extract-transform-load execution.
-- **Scheduler**: cron-driven sync initiation.
-- **Webhook Gateway**: webhook ingestion and queue fan-out.
+## Runtime services
+- `apps/api`: tenant-scoped control plane + sync trigger endpoints.
+- `apps/worker`: queue consumer, extractor -> transform -> load pipeline.
+- `apps/scheduler`: cron-driven enqueue for active schedules.
+- `apps/webhook-gateway`: signature-verified webhook ingest + job enqueue.
 
-## Shared packages
-- `@claricore/db`: PostgreSQL query layer.
-- `@claricore/queue`: BullMQ setup and queue helpers.
-- `@claricore/secret-manager`: encrypted secret storage.
-- `@claricore/transformations`: canonical mapping functions.
-- `@claricore/ui-contracts`: API request schemas.
-- `@claricore/observability`: structured logs, metric stubs, span helpers.
+## Pipeline
+1. API/scheduler/webhook enqueue BullMQ jobs.
+2. Worker resolves tenant connection and checkpoint.
+3. Salesforce extractor pulls Account/Contact incrementally (`LastModifiedDate`).
+4. Transformations map records to canonical model.
+5. Loader writes to HTTP, JSONL, or Postgres destination.
+6. Worker stores checkpoint and terminal job status.
 
-## Reliability notes
-- All services now expose explicit health endpoints.
-- API, worker, scheduler, and webhook gateway implement graceful shutdown hooks.
-- Worker and scheduler logs carry `correlationId`/`jobId` where applicable.
-- Webhook signature verification is currently an HMAC-SHA256 baseline and should be specialized per connector.
-
-## Known weak spots (minimal patch plan)
-- **Secrets and DB clients are process-local singletons**: acceptable for now, but future iterations should centralize connection lifecycle management.
-- **Webhook signature support is generic**: add connector-specific verifiers and replay protection (timestamp + nonce cache).
-- **Observability adapters are stubs**: wire to OpenTelemetry/metrics backend in a dedicated observability integration milestone.
+## Observability
+OpenTelemetry is initialized per app and exports OTLP traces when configured.
+Structured JSON logs include correlation fields (`orgId`, `connectionId`, `jobId`).

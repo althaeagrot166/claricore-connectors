@@ -12,15 +12,17 @@ export type SyncMode = "full" | "incremental" | "webhook";
 
 export interface Connection {
   id: string;
+  orgId: string;
   connectorType: string;
   name: string;
-  status: "active" | "inactive";
+  status: "active" | "inactive" | "paused";
   syncMode: SyncMode;
   configSecretId?: string | null;
   createdAt: string;
 }
 
 export interface CreateConnectionInput {
+  orgId: string;
   connectorType: string;
   name: string;
   syncMode: "full" | "incremental";

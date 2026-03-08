@@ -55,6 +55,7 @@ describe("webhook routes", () => {
       method: "POST",
       headers: {
         "content-type": "application/json",
+        "x-org-id": "org-1",
         "x-claricore-signature": sign(raw)
       },
       body: raw
@@ -67,7 +68,7 @@ describe("webhook routes", () => {
   it("returns 401 for missing signature", async () => {
     const res = await fetch(`http://127.0.0.1:${port}/webhooks`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", "x-org-id": "org-1" },
       body: JSON.stringify({ connectorType: "salesforce", eventType: "updated", payload: { id: "001" } })
     });
 
@@ -81,6 +82,7 @@ describe("webhook routes", () => {
       method: "POST",
       headers: {
         "content-type": "application/json",
+        "x-org-id": "org-1",
         "x-claricore-signature": "deadbeef"
       },
       body: raw
