@@ -1,63 +1,41 @@
-import {
-  ConnectorConfig,
-  ConnectorHealth,
-  ExtractContext,
-  SchemaDefinition,
-  SourceConnector,
-  StreamConnector,
-  TestConnectionResult
-} from "@claricore/core";
+import { ConnectorConfig, ConnectorHealth, ExtractContext, SourceConnector, StreamConnector, TestConnectionResult } from "@claricore/core";
+import { exchangeAuthCodeForToken, refreshAccessToken, buildAuthorizationUrl, type SalesforceConnectionConfig } from "./auth/oauth";
+import { extractAccountsAndContacts, testSalesforceConnection } from "./extractors/account-contact";
+import { salesforceSchemas } from "./schemas";
+import { verifySalesforceWebhookSignature } from "./webhooks";
+
+export * from "./auth/oauth";
+export * from "./webhooks";
 
 export class SalesforceConnector implements SourceConnector, StreamConnector {
   id = "salesforce";
   name = "Salesforce";
-  version = "0.4.0";
+  version = "0.6.0";
 
-  async healthCheck(): Promise<ConnectorHealth> {
-    return { ok: true, message: "Salesforce healthy" };
+  async healthCheck(): Promise<ConnectorHealth> { return { ok: true, message: "Salesforce healthy" }; }
+
+  private parseConfig(config: ConnectorConfig): SalesforceConnectionConfig {
+    return (config.credentials ?? {}) as unknown as SalesforceConnectionConfig;
   }
 
-  async testConnection(_config: ConnectorConfig): Promise<TestConnectionResult> {
-    return { ok: true, message: "Demo Salesforce connection succeeded" };
+  async testConnection(config: ConnectorConfig): Promise<TestConnectionResult> {
+    try {
+      await testSalesforceConnection(this.parseConfig(config));
+      return { ok: true, message: "Salesforce connection validated" };
+    } catch (error) {
+      return { ok: false, message: error instanceof Error ? error.message : "Unknown Salesforce test error" };
+    }
   }
 
-  async discoverSchema(_config: ConnectorConfig): Promise<SchemaDefinition[]> {
-    return [{
-      resource: "Account",
-      fields: [
-        { name: "Id", type: "string", required: true },
-        { name: "Name", type: "string", required: true },
-        { name: "LastModifiedDate", type: "datetime" }
-      ]
-    }];
-  }
+  async discoverSchema() { return salesforceSchemas; }
 
   async *extract(ctx: ExtractContext): AsyncGenerator<Record<string, unknown>> {
-    const resource = ctx.resource ?? "Account";
-    const now = new Date().toISOString();
-
-    yield {
-      source: "salesforce",
-      resource,
-      id: "001-demo",
-      name: "Demo Account",
-      updatedAt: now
-    };
-
-    yield {
-      source: "salesforce",
-      resource,
-      id: "001-demo-2",
-      name: "Acme Healthcare",
-      updatedAt: now
-    };
+    const config = ctx.config as SalesforceConnectionConfig;
+    yield* extractAccountsAndContacts(ctx, config);
   }
 
-  async subscribe(): Promise<void> {
-    return;
-  }
+  async subscribe(): Promise<void> { return; }
+  async handleWebhook(payload: unknown): Promise<void> { console.log("Received Salesforce webhook", payload); }
 
-  async handleWebhook(payload: unknown): Promise<void> {
-    console.log("Received Salesforce webhook", payload);
-  }
+  oauth = { buildAuthorizationUrl, exchangeAuthCodeForToken, refreshAccessToken, verifySalesforceWebhookSignature };
 }

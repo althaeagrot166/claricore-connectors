@@ -33,23 +33,23 @@ export function decryptSecret(secret: { iv: string; ciphertext: string; tag: str
   return JSON.parse(decrypted.toString("utf8")) as Record<string, unknown>;
 }
 
-export async function storeSecret(connectionId: string, value: Record<string, unknown>): Promise<string> {
+export async function storeSecret(orgId: string, connectionId: string, value: Record<string, unknown>): Promise<string> {
   const encrypted = encryptSecret(value);
   const result = await pool.query(
-    `INSERT INTO connection_secrets (connection_id, iv, ciphertext, auth_tag)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO connection_secrets (org_id, connection_id, iv, ciphertext, auth_tag)
+     VALUES ($1, $2, $3, $4, $5)
      RETURNING id`,
-    [connectionId, encrypted.iv, encrypted.ciphertext, encrypted.tag]
+    [orgId, connectionId, encrypted.iv, encrypted.ciphertext, encrypted.tag]
   );
   return result.rows[0].id as string;
 }
 
-export async function getSecret(secretId: string): Promise<Record<string, unknown> | null> {
+export async function getSecret(orgId: string, secretId: string): Promise<Record<string, unknown> | null> {
   const result = await pool.query(
     `SELECT id, iv, ciphertext, auth_tag AS tag
      FROM connection_secrets
-     WHERE id = $1`,
-    [secretId]
+     WHERE org_id = $1 AND id = $2`,
+    [orgId, secretId]
   );
   if (result.rowCount === 0) return null;
   return decryptSecret(result.rows[0] as { iv: string; ciphertext: string; tag: string });

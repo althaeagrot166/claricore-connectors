@@ -17,6 +17,7 @@
     "@claricore/db": "workspace:*",
     "@claricore/observability": "workspace:*",
     "@claricore/queue": "workspace:*",
-    "node-cron": "^3.0.3"
+    "node-cron": "^3.0.3",
+    "@claricore/config": "workspace:*"
   }
 }

@@ -1,16 +1,14 @@
-# Connector SDK
+# Connector SDK (V6)
 
-Connectors live in `connectors/<name>` and should export extraction logic and metadata.
+## Salesforce connector modules
+- `src/auth`: OAuth URL builder, auth-code exchange, token refresh.
+- `src/extractors`: paginated SOQL extraction + retry handling.
+- `src/schemas`: static schema discovery for Account/Contact.
+- `src/webhooks`: signature verification stub.
+- `src/transformers`: canonicalization helper.
 
-## Generate a connector
-
-```bash
-pnpm generate:connector my-system
-```
-
-This creates manifest, TS config, source, README, and starter tests.
-
-## Connector checklist
-- Define capabilities in `connector.manifest.json`
-- Export typed connector entrypoint
-- Add tests for extraction and mapping logic
+## OAuth flow
+1. Build authorize URL with `buildAuthorizationUrl`.
+2. Exchange callback code via `exchangeAuthCodeForToken`.
+3. Persist `accessToken`, `refreshToken`, `instanceUrl` in encrypted connection secrets.
+4. Refresh on expiry via `refreshAccessToken`.

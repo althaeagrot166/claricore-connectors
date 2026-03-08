@@ -10,22 +10,20 @@ const envSchema = z.object({
   QUEUE_NAME: z.string().min(1).default("sync-jobs"),
   LOG_LEVEL: z.string().default("info"),
   ENCRYPTION_KEY: z.string().length(64),
-  WEBHOOK_SIGNATURE_SECRET: z.string().default("dev-webhook-secret")
+  WEBHOOK_SIGNATURE_SECRET: z.string().default("dev-webhook-secret"),
+  API_KEY: z.string().default("dev-api-key"),
+  LOADER_TYPE: z.enum(["http", "jsonl", "postgres"]).default("http"),
+  LOADER_BATCH_SIZE: z.coerce.number().default(100),
+  CLARICORE_INGESTION_BASE_URL: z.string().default("http://localhost:8080"),
+  CLARICORE_INGESTION_TOKEN: z.string().default("dev-token"),
+  JSONL_OUTPUT_PATH: z.string().default("./tmp/claricore-output.jsonl"),
+  OTEL_SERVICE_NAME: z.string().default("claricore"),
+  OTEL_EXPORTER_OTLP_ENDPOINT: z.string().optional(),
+  OTEL_EXPORTER_OTLP_HEADERS: z.string().optional()
 });
 
 export function getConfig() {
-  const env = envSchema.parse({
-    PORT: process.env.PORT ?? 4000,
-    WEBHOOK_PORT: process.env.WEBHOOK_PORT ?? 4100,
-    WORKER_HEALTH_PORT: process.env.WORKER_HEALTH_PORT ?? 4200,
-    SCHEDULER_HEALTH_PORT: process.env.SCHEDULER_HEALTH_PORT ?? 4300,
-    DATABASE_URL: process.env.DATABASE_URL ?? "postgres://postgres:postgres@localhost:5432/claricore",
-    REDIS_URL: process.env.REDIS_URL ?? "redis://localhost:6379",
-    QUEUE_NAME: process.env.QUEUE_NAME ?? "sync-jobs",
-    LOG_LEVEL: process.env.LOG_LEVEL ?? "info",
-    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY ?? "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
-    WEBHOOK_SIGNATURE_SECRET: process.env.WEBHOOK_SIGNATURE_SECRET ?? "dev-webhook-secret"
-  });
+  const env = envSchema.parse(process.env);
 
   return {
     port: env.PORT,
@@ -37,6 +35,15 @@ export function getConfig() {
     queueName: env.QUEUE_NAME,
     logLevel: env.LOG_LEVEL,
     encryptionKey: env.ENCRYPTION_KEY,
-    webhookSignatureSecret: env.WEBHOOK_SIGNATURE_SECRET
+    webhookSignatureSecret: env.WEBHOOK_SIGNATURE_SECRET,
+    apiKey: env.API_KEY,
+    loaderType: env.LOADER_TYPE,
+    loaderBatchSize: env.LOADER_BATCH_SIZE,
+    claricoreIngestionBaseUrl: env.CLARICORE_INGESTION_BASE_URL,
+    claricoreIngestionToken: env.CLARICORE_INGESTION_TOKEN,
+    jsonlOutputPath: env.JSONL_OUTPUT_PATH,
+    otelServiceName: env.OTEL_SERVICE_NAME,
+    otelEndpoint: env.OTEL_EXPORTER_OTLP_ENDPOINT,
+    otelHeaders: env.OTEL_EXPORTER_OTLP_HEADERS
   };
 }
